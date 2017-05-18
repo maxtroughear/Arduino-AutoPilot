@@ -11,7 +11,8 @@ private:
 
 	static enum STATE
 	{
-		IDLE = 0
+		IDLE = 0,
+		HAS_APC
 	} state;
 
 	static void resetEEPROM();

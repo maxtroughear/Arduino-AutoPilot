@@ -37,5 +37,8 @@ void Configurator::resetEEPROM()
 
 void Configurator::decode(char *word, short size)
 {
-	
+	if (word == "APC")
+	{
+		state = HAS_APC;
+	}
 }
