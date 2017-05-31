@@ -146,11 +146,18 @@ void Stabilise::Loop()
 
 	if (millis() - deltaStableT >= 100)
 	{
-		for (int i = 0; i < 6; i++)
+		/*for (int i = 0; i < 6; i++)
 		{
 			NeoSerial.print(IO::final_channels[i]);
 			NeoSerial.print("\t");
-		}
+		}*/
+
+		NeoSerial.print(Sensors::MotionData.AHRS.pitch);
+		NeoSerial.print(",");
+		NeoSerial.print(Sensors::MotionData.AHRS.roll);
+		NeoSerial.print(",");
+		NeoSerial.print(Sensors::MotionData.AHRS.yaw);
+
 		NeoSerial.println();
 
 		deltaStableT = millis();

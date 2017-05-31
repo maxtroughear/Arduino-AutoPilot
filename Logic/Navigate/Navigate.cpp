@@ -161,20 +161,20 @@ void Navigate::navigateTo(NeoGPS::Location_t &point)
 			NeoSerial.print(IO::final_channels[i]);
 			NeoSerial.print("\t");
 		}*/
-		NeoSerial.print(Sensors::MotionData.AHRS.roll);
-		NeoSerial.print("\t");
 		NeoSerial.print(Sensors::MotionData.AHRS.pitch);
+		NeoSerial.print("\t");
+		NeoSerial.print(Sensors::MotionData.AHRS.roll);
 		NeoSerial.print("\t");
 
 		NeoSerial.println();
 
-		NeoSerial.print(rollAmount);
-		NeoSerial.print("\t");
 		NeoSerial.print(pitchAmount);
 		NeoSerial.print("\t");
-		NeoSerial.print(targetRoll);
+		NeoSerial.print(rollAmount);
 		NeoSerial.print("\t");
 		NeoSerial.print(targetPitch);
+		NeoSerial.print("\t");
+		NeoSerial.print(targetRoll);
 
 		NeoSerial.println();
 

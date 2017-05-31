@@ -24,7 +24,7 @@ void Manual::Loop()
 	IO::final_channels[IO_OUT_MOTOR1] = IO::input_channels[IO_IN_THROTTLE];
 	IO::final_channels[IO_OUT_MOTOR2] = IO::input_channels[IO_IN_THROTTLE];
 
-	if (millis() - deltaManualT >= 100)
+	/*if (millis() - deltaManualT >= 100)
 	{
 
 		for (int i = 0; i < 8; i++)
@@ -45,5 +45,5 @@ void Manual::Loop()
 		NeoSerial.println();
 
 		deltaManualT = millis();
-	}
+	}*/
 }
