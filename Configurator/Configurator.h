@@ -1,5 +1,7 @@
 #pragma once
 
+#include <arduino.h>
+
 class Configurator
 {
 public:
@@ -8,18 +10,15 @@ public:
 	static void Loop();
 
 private:
-
-	static enum STATE
-	{
-		IDLE = 0,
-		HAS_APC
-	} state;
-
 	static void resetEEPROM();
 
-	static void decode(char *word, short size);
+	static void decode(byte buffer[], short size);
+
+	static void sendGPS();
 
 	static bool connected;
 
-	static char *words[];
+	static unsigned long lastpoll;
+
+	static unsigned long lastGPS;
 };

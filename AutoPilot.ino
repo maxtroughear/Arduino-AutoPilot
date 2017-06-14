@@ -40,6 +40,7 @@ unsigned long deltaTime = 0;
 
 void loop()
 {
+	unsigned long time = millis();
 	IO::LoopInput();
 
 	Sensors::Loop();
@@ -73,4 +74,6 @@ void loop()
 	//LCD::Loop();
 
 	IO::LoopOutput();
+
+	//NeoSerial.println(millis() - time);
 }

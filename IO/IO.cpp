@@ -11,6 +11,8 @@
 
 // Define all variables
 
+bool IO::failsafe = false;
+
 unsigned short IO::input_channels[8] = { 0, 0, 0, 0, 0, 0, 0, 0 };
 unsigned short IO::final_channels[6] = { 0, 0, 0, 0, 0, 0 };
 
@@ -64,7 +66,7 @@ void IO::LoopInput()
 	memcpy(input_buffer, (const void *)input_shared, sizeof(input_shared));
 	interrupts();
 
-	if ((millis() - input_last) > 2000)
+	if ((millis() - input_last) > 500)
 	{
 		// Failsafe code
 		//Serial.println("Failsafe");
@@ -72,10 +74,14 @@ void IO::LoopInput()
 		input_channels[1] = 1500;
 		input_channels[2] = 1500;
 		input_channels[3] = 1500;
+		input_channels[3] = 1500;
+		input_channels[3] = 1500;
+		failsafe = true;
 		// Eventually will change to circle over point or RTH then circle
 	}
 	else
 	{
+		failsafe = false;
 		// Smoothing/filtering code
 		for (short i = 0; i < 8; i++)
 		{
@@ -94,6 +100,15 @@ void IO::LoopInput()
 		if (filterIndex >= IO_INPUT_FILTER_AMOUNT)
 			filterIndex = 0;
 	}
+
+#if IO_DEBUG_LOG_IN == true
+	for (int i = 0; i < 8; i++)
+	{
+		NeoSerial.print(input_channels[i]);
+		NeoSerial.print("\t");
+	}
+	NeoSerial.println();
+#endif
 }
 
 // Called at the end of loop, generates the outputs for the motor ESC and servo for steering
@@ -102,13 +117,26 @@ void IO::LoopOutput()
 {
 	for (short i = 0; i < 6; i++)
 		output[i].writeMicroseconds(final_channels[i]);
+
+#if IO_DEBUG_LOG_OUT == true
+	for (int i = 0; i < 6; i++)
+	{
+		NeoSerial.print(final_channels[i]);
+		NeoSerial.print("\t");
+	}
+	NeoSerial.println();
+#endif
+}
+
+bool IO::Failsafe() {
+	return failsafe;
 }
 
 // Used as part of the interrupt routine, to calculate the pulse length of individual signals
 
 void IO::calcValues(unsigned int channel, unsigned int pin)
 {
-	input_last = millis();
+	//input_last = millis();
 	if (digitalRead(pin) == HIGH)
 		input_start[channel] = micros();
 	else
@@ -123,11 +151,13 @@ void IO::calcValues(unsigned int channel, unsigned int pin)
 
 void IO::calcValues_roll()
 {
+	input_last = millis();
 	calcValues(0, IN_ROLL);
 }
 
 void IO::calcValues_pitch()
 {
+	input_last = millis();
 	calcValues(1, IN_PITCH);
 }
 

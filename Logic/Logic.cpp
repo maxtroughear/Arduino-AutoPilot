@@ -3,6 +3,7 @@
 #include "Manual/Manual.h"
 #include "Stabilise/Stabilise.h"
 #include "Navigate/Navigate.h"
+#include "Hold/Hold.h"
 
 #include "../GPS/GPS.h"
 #include "../Sensors/Sensors.h"
@@ -41,6 +42,9 @@ void Logic::Initialise()
 	FlightModes::Navigate::SetGroundAltitude(Sensors::Altitude);
 
 	FlightModes::Navigate::AddWaypoint(schoolClass);
+
+
+	NeoSerial.println("Ready!");
 }
 
 void Logic::Loop()
@@ -98,10 +102,12 @@ void Logic::Loop()
 		return;
 	}
 
-	if (failsafe)
+	if (IO::Failsafe())
 	{
 		// Circle
 		//FlightModes::Hold::Loop();
+		FlightModes::Navigate::ReturnToHome();
+		NeoSerial.println("Failsafe");
 		return;
 	}
 
@@ -124,6 +130,10 @@ void Logic::Loop()
 		FlightModes::Stabilise::Loop();
 	else if (Mode == NAVIGATE)
 		FlightModes::Navigate::Loop();
+	else if (Mode == RTH)
+		FlightModes::Navigate::ReturnToHome();
+	else if (Mode = HOLD)
+		FlightModes::Hold::Loop();
 }
 
 Logic::FlightMode Logic::GetMode()
@@ -144,6 +154,8 @@ void Logic::SetMode(FlightMode newMode)
 		FlightModes::Stabilise::Start();
 	else if (Mode == NAVIGATE)
 		FlightModes::Navigate::Start();
+	else if (Mode == HOLD)
+		FlightModes::Hold::Start();
 
 	NeoSerial.print("Mode changed: "); NeoSerial.println(newMode);
 }

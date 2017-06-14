@@ -81,7 +81,7 @@ void GPS::Initialise()
 
 	GPS_PORT.begin(9600);
 
-	delay(100);
+	delay(2000);
 	// set baud rate
 	/*sendUBX(ubxBaud38400, sizeof(ubxBaud38400));
 

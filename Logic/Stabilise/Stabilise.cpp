@@ -122,6 +122,11 @@ void Stabilise::Loop()
 	{
 		float deltaYaw = targetYaw - Sensors::MotionData.AHRS.yaw;
 
+		if (deltaYaw > 180)
+			deltaYaw -= 360;
+		else if (deltaYaw < -180)
+			deltaYaw += 360;
+
 		timeGainYaw += abs(deltaYaw);
 		timeGainYaw /= FLIGHT_STABILISE_TIME_YAW;
 

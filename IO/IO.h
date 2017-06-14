@@ -31,6 +31,8 @@ public:
 	static void LoopInput();
 	static void LoopOutput();
 
+	static bool Failsafe();
+
 private:
 	static void calcValues(unsigned int channel, unsigned int pin);
 
@@ -42,6 +44,8 @@ private:
 	static void calcValues_aux2();
 	static void calcValues_aux3();
 	static void calcValues_aux4();
+
+	static bool failsafe;
 
 	static unsigned short input_buffer[8];
 	static unsigned short input_channels_filter[8][IO_INPUT_FILTER_AMOUNT];

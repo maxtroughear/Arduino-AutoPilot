@@ -15,6 +15,7 @@
 #define SENSORS_MOTION_FUSION				true
 #define SENSORS_MOTION_FILTER				false
 #define SENSORS_MOTION_FILTER_PERCENT		60
+#define SENSORS_DEBUG_LOG_AHRS				false
 
 // GPS
 
@@ -22,9 +23,15 @@
 #define GPS_DEBUG_ECHO						false
 #define GPS_RATE							ubxRate10Hz
 
+// Configurator
+
+#define CONFIGURE_SEND_GPS_TIME				200
+
 // IO
 
 #define IO_INPUT_FILTER_AMOUNT				10
+#define IO_DEBUG_LOG_IN						false
+#define IO_DEBUG_LOG_OUT					false
 
 // Input
 
@@ -32,8 +39,8 @@
 #define FLIGHT_STICK_MAX					1950
 #define FLIGHT_STICK_MIN					1050
 
-#define FLIGHT_STICK_ARM_MIN				1100
-#define FLIGHT_STICK_ARM_MAX				1900
+#define FLIGHT_STICK_ARM_MIN				1150
+#define FLIGHT_STICK_ARM_MAX				1850
 
 // Flight Modes
 

@@ -91,6 +91,7 @@
     <ClInclude Include="IO\IO.h" />
     <ClInclude Include="LCD\LCD.h" />
     <ClInclude Include="LCD\Scenes\Scene.h" />
+    <ClInclude Include="Logic\Hold\Hold.h" />
     <ClInclude Include="Logic\Logic.h" />
     <ClInclude Include="Logic\Manual\Manual.h" />
     <ClInclude Include="Logic\Navigate\Navigate.h" />
@@ -122,6 +123,7 @@
     <ClCompile Include="LCD\LCD.cpp" />
     <ClCompile Include="LCD\Scenes\Scenes.cpp" />
     <ClCompile Include="LCD\Scenes\SensorDebug.cpp" />
+    <ClCompile Include="Logic\Hold\Hold.cpp" />
     <ClCompile Include="Logic\Logic.cpp" />
     <ClCompile Include="Logic\Manual\Manual.cpp" />
     <ClCompile Include="Logic\Navigate\Navigate.cpp" />

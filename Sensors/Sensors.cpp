@@ -159,7 +159,7 @@ void Sensors::Loop()
 
 		motionSensor.delt_t = millis() - motionSensor.count;
 
-		MahonyQuaternionUpdate(motionSensor.ax, motionSensor.ay, motionSensor.az,
+		MadgwickQuaternionUpdate(motionSensor.ax, motionSensor.ay, motionSensor.az,
 			motionSensor.gx * DEG_TO_RAD, motionSensor.gy * DEG_TO_RAD, motionSensor.gz * DEG_TO_RAD,
 			motionSensor.my, motionSensor.mx, motionSensor.mz,
 			motionSensor.deltat);
@@ -175,8 +175,10 @@ void Sensors::Loop()
 			* *(getQ() + 1) - *(getQ() + 2) * *(getQ() + 2) + *(getQ() + 3)
 			* *(getQ() + 3));
 		motionSensor.pitch *= RAD_TO_DEG;
+		motionSensor.pitch *= -1;
 		motionSensor.yaw *= RAD_TO_DEG;
-		motionSensor.yaw -= 19.71;
+		motionSensor.yaw *= -1;
+		//motionSensor.yaw -= 19.71;
 		motionSensor.roll *= RAD_TO_DEG;
 
 		MotionData.Accel.x = motionSensor.ax;
@@ -199,6 +201,15 @@ void Sensors::Loop()
 		MotionData.AHRS.pitch = motionSensor.pitch;
 		MotionData.AHRS.roll = motionSensor.roll;
 		MotionData.AHRS.yaw = motionSensor.yaw;
+#endif
+
+#if SENSORS_DEBUG_LOG_AHRS == true
+		NeoSerial.print(MotionData.AHRS.pitch);
+		NeoSerial.print("\t");
+		NeoSerial.print(MotionData.AHRS.roll);
+		NeoSerial.print("\t");
+		NeoSerial.print(MotionData.AHRS.yaw);
+		NeoSerial.println();
 #endif
 
 		MotionData.rate = (float)motionSensor.sumCount / motionSensor.sum;

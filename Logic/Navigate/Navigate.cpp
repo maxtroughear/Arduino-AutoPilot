@@ -90,8 +90,8 @@ void Navigate::navigateTo(NeoGPS::Location_t &point)
 	//	gpsBearing += 360;
 
 	float ahrsBearing = Sensors::MotionData.AHRS.yaw;
-	if (ahrsBearing < 0) // convert to 0 - 360 format
-		ahrsBearing += 360;
+	//if (ahrsBearing < 0) // convert to 0 - 360 format
+	//	ahrsBearing += 360;
 
 	// calculate potential heading error
 	float errorBearing = (ahrsBearing - gpsBearing) / gpsBearing;	// decimal
@@ -112,17 +112,34 @@ void Navigate::navigateTo(NeoGPS::Location_t &point)
 
 	targetYaw = targetBearing - currentBearing;
 
+	
+
 	targetRoll = targetYaw * FLIGHT_NAVIGATE_ROLL_GAIN;
 	targetRoll = constrain(targetRoll, -FLIGHT_NAVIGATE_ROLL_MAX, FLIGHT_NAVIGATE_ROLL_MAX);
 
 	float rollAmount = targetRoll - Sensors::MotionData.AHRS.roll;
+
+	if (rollAmount > 180)
+		rollAmount -= 360;
+	else if (rollAmount < -180)
+		rollAmount += 360;
 
 	targetPitch = targetPitch * FLIGHT_NAVIGATE_PITCH_GAIN;
 	targetPitch = constrain(targetPitch, -FLIGHT_NAVIGATE_PITCH_MAX, FLIGHT_NAVIGATE_PITCH_MAX);
 
 	float pitchAmount = targetPitch - Sensors::MotionData.AHRS.pitch;
 
+	if (pitchAmount > 180)
+		pitchAmount -= 360;
+	else if (pitchAmount < -180)
+		pitchAmount += 360;
+
 	float yawAmount = 0;	// temporary
+
+	if (yawAmount > 180)
+		yawAmount -= 360;
+	else if (yawAmount < -180)
+		yawAmount += 360;
 
 	unsigned short aileronChannel = FLIGHT_STICK_CENTRE;
 	unsigned short elevatorChannel = FLIGHT_STICK_CENTRE;
@@ -165,8 +182,10 @@ void Navigate::navigateTo(NeoGPS::Location_t &point)
 		NeoSerial.print("\t");
 		NeoSerial.print(Sensors::MotionData.AHRS.roll);
 		NeoSerial.print("\t");
+		NeoSerial.print(currentBearing);
+		NeoSerial.print("\t");
 
-		NeoSerial.println();
+		//NeoSerial.println();
 
 		NeoSerial.print(pitchAmount);
 		NeoSerial.print("\t");
@@ -175,6 +194,9 @@ void Navigate::navigateTo(NeoGPS::Location_t &point)
 		NeoSerial.print(targetPitch);
 		NeoSerial.print("\t");
 		NeoSerial.print(targetRoll);
+		NeoSerial.print("\t");
+		NeoSerial.print(targetBearing);
+		NeoSerial.print("\t");
 
 		NeoSerial.println();
 
