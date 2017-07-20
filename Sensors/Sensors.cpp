@@ -179,27 +179,29 @@ void Sensors::Loop()
 		motionSensor.yaw *= RAD_TO_DEG;
 		motionSensor.yaw *= -1;
 		//motionSensor.yaw -= 19.71;
+		motionSensor.yaw += 90;
 		motionSensor.roll *= RAD_TO_DEG;
+		motionSensor.roll *= -1;
 
-		MotionData.Accel.x = motionSensor.ax;
-		MotionData.Accel.y = motionSensor.ay;
+		MotionData.Accel.x = motionSensor.ay;
+		MotionData.Accel.y = motionSensor.ax;
 		MotionData.Accel.z = motionSensor.az;
 
-		MotionData.Gyro.x = motionSensor.gx;
-		MotionData.Gyro.y = motionSensor.gy;
+		MotionData.Gyro.x = motionSensor.gy;
+		MotionData.Gyro.y = motionSensor.gx;
 		MotionData.Gyro.z = motionSensor.gz;
 
 #if SENSORS_MOTION_FILTER == true
-		motionFilterPitch.Filter(motionSensor.pitch);
-		motionFilterRoll.Filter(motionSensor.roll);
+		motionFilterPitch.Filter(motionSensor.roll);
+		motionFilterRoll.Filter(motionSensor.pitch);
 		motionFilterYaw.Filter(motionSensor.yaw);
 
 		MotionData.AHRS.pitch = motionFilterPitch.Current();
 		MotionData.AHRS.roll = motionFilterRoll.Current();
 		MotionData.AHRS.yaw = motionFilterYaw.Current();
 #else
-		MotionData.AHRS.pitch = motionSensor.pitch;
-		MotionData.AHRS.roll = motionSensor.roll;
+		MotionData.AHRS.pitch = motionSensor.roll;
+		MotionData.AHRS.roll = motionSensor.pitch;
 		MotionData.AHRS.yaw = motionSensor.yaw;
 #endif
 

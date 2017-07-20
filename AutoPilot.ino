@@ -21,17 +21,20 @@
 void setup()
 {
 	NeoSerial.begin(115200);
+
+	delay(1000);
+
 	//GPS::PassThrough();
 	
 	//LCD::Initialise();
-
-	IO::final_channels[2];
 
 	IO::Initialise();
 
 	Sensors::Initialise();
 
 	GPS::Initialise();
+
+	Configurator::Init();
 
 	Logic::Initialise();
 }
@@ -45,6 +48,8 @@ void loop()
 
 	Sensors::Loop();
 	GPS::Loop();
+
+	Configurator::Loop();
 
 	Logic::Loop();
 

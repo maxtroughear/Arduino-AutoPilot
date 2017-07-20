@@ -15,7 +15,7 @@
 #define SENSORS_MOTION_FUSION				true
 #define SENSORS_MOTION_FILTER				false
 #define SENSORS_MOTION_FILTER_PERCENT		60
-#define SENSORS_DEBUG_LOG_AHRS				false
+#define SENSORS_DEBUG_LOG_AHRS				true
 
 // GPS
 

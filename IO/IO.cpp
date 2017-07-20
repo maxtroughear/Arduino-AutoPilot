@@ -54,7 +54,16 @@ void IO::Initialise()
 			input_channels_filter[i][j] = 0;
 	}
 
-	//Serial.println("IO Initialisation Done");
+	final_channels[IO_OUT_AILERON1] = 1500;
+	final_channels[IO_OUT_AILERON2] = 1500;
+	final_channels[IO_OUT_ELEVATOR] = 1500;
+	final_channels[IO_OUT_RUDDER] = 1500;
+	final_channels[IO_OUT_MOTOR1] = 900;
+	final_channels[IO_OUT_MOTOR2] = 900;
+
+	LoopOutput();
+
+	NeoSerial.println("IO Initialisation Done");
 }
 
 // Called at the start of loop, to retrieve input values and smooth the inputs

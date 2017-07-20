@@ -47,13 +47,19 @@ void Configurator::resetEEPROM()
 
 void Configurator::decode(byte buffer[], short size)
 {
-	if (size < 5)	// min 5 bytes
-		return;
+	for (int i = 0; i < size; i++)
+	{
+		NeoSerial.write(buffer[i]);
+	}
+
+	//if (size < 5)	// min 5 bytes
+	//	return;
 	if (buffer[0] != 'A' && buffer[1] != 'P')
 		return;
 
 	if (buffer[2] == 'S' && buffer[3] == 'C')
 	{
+		NeoSerial.println("Connect Poll!");
 		connected = true;
 		lastpoll = millis();
 	}
