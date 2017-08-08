@@ -1,5 +1,7 @@
 #include "Scene.h"
 
+#if LCD_ENABLED
+
 #include <NeoHWSerial.h>
 
 #include "../../Sensors/Sensors.h"
@@ -213,3 +215,5 @@ void Scenes::SensorDebug(bool init)
 			LCD::TouchRead(&point);
 	}
 }
+
+#endif

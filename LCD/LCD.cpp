@@ -1,5 +1,7 @@
 #include "LCD.h"
 
+#if LCD_ENABLED
+
 #include <NeoHWSerial.h>
 
 #include "Scenes/Scene.h"
@@ -219,3 +221,5 @@ uint16_t LCD::RGB24toRGB565(uint8_t r, uint8_t g, uint8_t b)
 {
 	return ((r / 8) << 11) | ((g / 4) << 5) | (b / 8);
 }
+
+#endif

@@ -56,6 +56,8 @@ private:
 	static bool magWorking;
 	static bool altWorking;
 
+	static unsigned long timeSinceCal;
+
 	static MPL3115A2 pressureSensor;
 	static MPU9250 motionSensor;
 

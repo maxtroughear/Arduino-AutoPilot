@@ -55,6 +55,28 @@ void Navigate::AddWaypoint(NeoGPS::Location_t point)
 		NeoSerial.println("Unable to add waypoint to navigation flight mode, FLIGHT_NAVIGATE_MAX_WAYPOINTS reached");
 }
 
+void Navigate::RemoveWaypoint(int index)
+{
+	if (index >= waypointCount || index < 0)
+		return;
+	for (int i = index; i < waypointCount && i < FLIGHT_NAVIGATE_MAX_WAYPOINTS; i++)
+		waypoints[index + i] = waypoints[i + 1];
+
+	waypointCount--;
+}
+
+int Navigate::GetWaypointCount()
+{
+	return waypointCount;
+}
+
+NeoGPS::Location_t Navigate::GetWaypoint(int index)
+{
+	if (index >= waypointCount || index < 0)
+		return;
+	return waypoints[index];
+}
+
 void Navigate::navigateTo(NeoGPS::Location_t &point)
 {
 	float targetDistance = GPS::DistanceTo(point);
@@ -83,7 +105,9 @@ void Navigate::navigateTo(NeoGPS::Location_t &point)
 
 	// calculate yaw
 	
-	float targetBearing = GPS::BearingTo(point) - 180.f;
+	float targetBearing = GPS::BearingTo(point);
+	if (targetBearing > 180)
+		targetBearing -= 360;
 
 	float gpsBearing = GPS::GPSData.heading;
 	//if (gpsBearing < 0) // convert to 0 - 360 format
@@ -141,12 +165,12 @@ void Navigate::navigateTo(NeoGPS::Location_t &point)
 	else if (yawAmount < -180)
 		yawAmount += 360;
 
-	unsigned short aileronChannel = FLIGHT_STICK_CENTRE;
-	unsigned short elevatorChannel = FLIGHT_STICK_CENTRE;
-	unsigned short rudderChannel = FLIGHT_STICK_CENTRE;
+	unsigned short aileronChannel = IO_CENTRE_AILERON;
+	unsigned short elevatorChannel = IO_CENTRE_ELEVATOR;
+	unsigned short rudderChannel = IO_CENTRE_RUDDER;
 
 	aileronChannel += rollAmount * FLIGHT_NAVIGATE_GAIN;
-	elevatorChannel += pitchAmount * FLIGHT_NAVIGATE_GAIN;
+	elevatorChannel -= pitchAmount * FLIGHT_NAVIGATE_GAIN;
 	rudderChannel += yawAmount;
 
 	if (GPS::GPSData.speed >= FLIGHT_NAVIGATE_SPEED_TARGET - 1 && GPS::GPSData.speed <= FLIGHT_NAVIGATE_SPEED_TARGET + 1)
@@ -162,10 +186,10 @@ void Navigate::navigateTo(NeoGPS::Location_t &point)
 		throttle += 1;
 	}
 
-	IO::final_channels[IO_OUT_AILERON1] = aileronChannel;
-	IO::final_channels[IO_OUT_AILERON2] = aileronChannel;
-	IO::final_channels[IO_OUT_ELEVATOR] = elevatorChannel;
-	IO::final_channels[IO_OUT_RUDDER] = rudderChannel;
+	IO::final_channels[IO_OUT_AILERON1] = map(aileronChannel, FLIGHT_STICK_MIN, FLIGHT_STICK_MAX, IO_MIN_AILERON, IO_MAX_AILERON);
+	IO::final_channels[IO_OUT_AILERON2] = map(aileronChannel, FLIGHT_STICK_MIN, FLIGHT_STICK_MAX, IO_MIN_AILERON, IO_MAX_AILERON);
+	IO::final_channels[IO_OUT_ELEVATOR] = map(elevatorChannel, FLIGHT_STICK_MIN, FLIGHT_STICK_MAX, IO_MIN_ELEVATOR, IO_MAX_ELEVATOR);
+	IO::final_channels[IO_OUT_RUDDER] = map(rudderChannel, FLIGHT_STICK_MIN, FLIGHT_STICK_MAX, IO_MIN_RUDDER, IO_MAX_RUDDER);
 
 	IO::final_channels[IO_OUT_MOTOR1] = constrain(throttle, 1200, 1800);
 	IO::final_channels[IO_OUT_MOTOR2] = constrain(throttle, 1200, 1800);

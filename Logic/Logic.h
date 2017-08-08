@@ -27,5 +27,7 @@ private:
 	static bool failsafe;
 	static bool armed;
 
+	static unsigned long timeSinceCal;
+
 	static void SetMode(FlightMode newMode);
 };

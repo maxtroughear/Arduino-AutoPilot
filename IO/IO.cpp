@@ -33,6 +33,7 @@ Servo IO::output[6];
 
 void IO::Initialise()
 {
+#if IO_ENABLED
 	for (int i = 0; i < 8; i++)
 		pinMode(input[i], INPUT);
 
@@ -64,6 +65,8 @@ void IO::Initialise()
 	LoopOutput();
 
 	NeoSerial.println("IO Initialisation Done");
+
+#endif
 }
 
 // Called at the start of loop, to retrieve input values and smooth the inputs
@@ -71,6 +74,7 @@ void IO::Initialise()
 
 void IO::LoopInput()
 {
+#if IO_ENABLED
 	noInterrupts();		// disables interrupts, so memory can safely be copied to non-volatile memory
 	memcpy(input_buffer, (const void *)input_shared, sizeof(input_shared));
 	interrupts();
@@ -83,8 +87,8 @@ void IO::LoopInput()
 		input_channels[1] = 1500;
 		input_channels[2] = 1500;
 		input_channels[3] = 1500;
-		input_channels[3] = 1500;
-		input_channels[3] = 1500;
+		//input_channels[3] = 1500;
+		//input_channels[3] = 1500;
 		failsafe = true;
 		// Eventually will change to circle over point or RTH then circle
 	}
@@ -118,16 +122,35 @@ void IO::LoopInput()
 	}
 	NeoSerial.println();
 #endif
+
+#endif
 }
 
 // Called at the end of loop, generates the outputs for the motor ESC and servo for steering
 
 void IO::LoopOutput()
 {
+#if IO_ENABLED
+	// invert ailerons
+	final_channels[IO_OUT_AILERON1] = map(final_channels[IO_OUT_AILERON1], 1000, 2000, 2000, 1000);
+	final_channels[IO_OUT_AILERON2] = map(final_channels[IO_OUT_AILERON2], 1000, 2000, 2000, 1000);
+
+	// offset channels
+	final_channels[IO_OUT_AILERON1] += IO_OFFSET_AILERON1;
+	final_channels[IO_OUT_AILERON2] += IO_OFFSET_AILERON2;
+	final_channels[IO_OUT_ELEVATOR] += IO_OFFSET_ELEVATOR;
+	final_channels[IO_OUT_RUDDER] += IO_OFFSET_RUDDER;
+
+
+	// final limit checks
+
+	final_channels[IO_OUT_RUDDER] = constrain(final_channels[IO_OUT_RUDDER], FLIGHT_STICK_MIN, FLIGHT_STICK_MAX);
+
+
 	for (short i = 0; i < 6; i++)
 		output[i].writeMicroseconds(final_channels[i]);
 
-#if IO_DEBUG_LOG_OUT == true
+#if IO_DEBUG_LOG_OUT
 	for (int i = 0; i < 6; i++)
 	{
 		NeoSerial.print(final_channels[i]);
@@ -135,10 +158,12 @@ void IO::LoopOutput()
 	}
 	NeoSerial.println();
 #endif
+
+#endif
 }
 
 bool IO::Failsafe() {
-	return failsafe;
+	return failsafe && IO_FAILSAFE_ENABLED && IO_ENABLED;
 }
 
 // Used as part of the interrupt routine, to calculate the pulse length of individual signals

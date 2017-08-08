@@ -1,11 +1,14 @@
 #pragma once
 
+#include "../Config.h"
+
+#if LCD_ENABLED
+
 #include <EEPROM.h>
 
 #include <RA8875.h>
 #include <Filter.h>
 
-#include "../Config.h"
 #include "../PinConfig.h"
 
 struct tsPoint_t
@@ -62,3 +65,5 @@ private:
 	//static tsPoint_t cal_tsTSPoints[3];
 	//static tsMatrix_t cal_tsMatrix;
 };
+
+#endif

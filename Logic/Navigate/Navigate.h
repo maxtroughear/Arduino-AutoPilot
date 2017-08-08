@@ -17,6 +17,9 @@ namespace FlightModes
 		static void SetGroundAltitude(float altitude);
 
 		static void AddWaypoint(NeoGPS::Location_t point);
+		static void RemoveWaypoint(int index);
+		static int GetWaypointCount();
+		static NeoGPS::Location_t GetWaypoint(int index);
 
 		static void ReturnToHome();
 

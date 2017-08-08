@@ -2,6 +2,8 @@
 
 #include "../LCD.h"
 
+#if LCD_ENABLED
+
 // Scene class, used by the LCD class to display data for particular things
 
 class Scenes
@@ -25,3 +27,5 @@ private:
 
 	static void SensorDebug(bool init = false);
 };
+
+#endif

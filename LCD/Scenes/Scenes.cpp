@@ -1,5 +1,7 @@
 #include "Scene.h"
 
+#if LCD_ENABLED
+
 RA8875 *Scenes::tft;
 
 Scenes::SCENES Scenes::activeScene = SENSOR_DEBUG;
@@ -39,3 +41,5 @@ void Scenes::LoopLCD()
 
 	}
 }
+
+#endif

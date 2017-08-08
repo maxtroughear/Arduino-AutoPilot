@@ -13,6 +13,8 @@ Logic::FlightMode Logic::Mode = Logic::MANUAL;
 bool Logic::failsafe = false;
 bool Logic::armed = false;
 
+unsigned long Logic::timeSinceCal = 0;
+
 NeoGPS::Location_t schoolClass(-36.89801493, 174.9029734);
 
 void Logic::Initialise()
@@ -70,22 +72,32 @@ void Logic::Loop()
 		}
 		else if (IO::input_channels[IO_IN_THROTTLE] > FLIGHT_STICK_ARM_MAX && IO::input_channels[IO_IN_YAW] > FLIGHT_STICK_ARM_MAX)
 		{
-			// calibrate magnetometer
-			NeoSerial.println("Move in figure 8 motion for 15 seconds");
-			NeoSerial.println("Calibrate Compass in 4 seconds...");
-			delay(4000);
-			NeoSerial.println("Calibrating now!");
-			Sensors::CalibrateMagnetometer();
-			NeoSerial.println("Done");
+			if (millis() - timeSinceCal >= 5000)
+			{
+				// calibrate magnetometer
+				NeoSerial.println("Move in figure 8 motion for 15 seconds");
+				NeoSerial.println("Calibrate Compass in 4 seconds...");
+				delay(4000);
+				NeoSerial.println("Calibrating now!");
+				Sensors::CalibrateMagnetometer();
+				NeoSerial.println("Done");
+
+				timeSinceCal = millis();
+			}
 		}
 		else if (IO::input_channels[IO_IN_THROTTLE] > FLIGHT_STICK_ARM_MAX && IO::input_channels[IO_IN_YAW] < FLIGHT_STICK_ARM_MIN)
 		{
-			// calibrate accel/gyro
-			NeoSerial.println("Calibrate Accelerometer and Gyroscope in 4 seconds");
-			delay(4000);
-			NeoSerial.println("Calibrating now!");
-			Sensors::CalibrateAccelerometer();
-			NeoSerial.println("Done");
+			if (millis() - timeSinceCal >= 5000)
+			{
+				// calibrate accel/gyro
+				NeoSerial.println("Calibrate Accelerometer and Gyroscope in 4 seconds");
+				delay(4000);
+				NeoSerial.println("Calibrating now!");
+				Sensors::CalibrateAccelerometer();
+				NeoSerial.println("Done");
+
+				timeSinceCal = millis();
+			}
 		}
 		else
 		{
@@ -94,10 +106,10 @@ void Logic::Loop()
 			FlightModes::Navigate::SetGroundAltitude(Sensors::Altitude);
 			IO::final_channels[IO_OUT_MOTOR1] = 900;
 			IO::final_channels[IO_OUT_MOTOR2] = 900;
-			IO::final_channels[IO_OUT_AILERON1] = 1500;
-			IO::final_channels[IO_OUT_AILERON2] = 1500;
-			IO::final_channels[IO_OUT_ELEVATOR] = 1500;
-			IO::final_channels[IO_OUT_RUDDER] = 1500;
+			IO::final_channels[IO_OUT_AILERON1] = IO_CENTRE_AILERON;
+			IO::final_channels[IO_OUT_AILERON2] = IO_CENTRE_AILERON;
+			IO::final_channels[IO_OUT_ELEVATOR] = IO_CENTRE_ELEVATOR;
+			IO::final_channels[IO_OUT_RUDDER] = IO_CENTRE_RUDDER;
 		}
 		return;
 	}

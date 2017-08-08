@@ -26,7 +26,9 @@ void setup()
 
 	//GPS::PassThrough();
 	
-	//LCD::Initialise();
+#if LCD_ENABLED
+	LCD::Initialise();
+#endif
 
 	IO::Initialise();
 
@@ -48,6 +50,10 @@ void loop()
 
 	Sensors::Loop();
 	GPS::Loop();
+
+#if LCD_ENABLED
+	LCD::Loop();
+#endif
 
 	Configurator::Loop();
 

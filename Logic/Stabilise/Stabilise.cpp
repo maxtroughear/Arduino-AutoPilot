@@ -33,7 +33,7 @@ void Stabilise::Loop()
 	
 	// pitch and roll
 	
-	if (IO::input_channels[IO_IN_ROLL] >= FLIGHT_STICK_CENTRE - FLIGHT_STABILISE_DEADZONE && IO::input_channels[IO_IN_ROLL] <= FLIGHT_STICK_CENTRE + FLIGHT_STABILISE_DEADZONE)
+	if (IO::input_channels[IO_IN_ROLL] >= IO_CENTRE_AILERON - FLIGHT_STABILISE_DEADZONE && IO::input_channels[IO_IN_ROLL] <= IO_CENTRE_AILERON + FLIGHT_STABILISE_DEADZONE)
 	{
 		if (!stabilisingRoll)
 		{
@@ -46,7 +46,7 @@ void Stabilise::Loop()
 	else
 		stabilisingRoll = false;
 
-	if (IO::input_channels[IO_IN_PITCH] >= FLIGHT_STICK_CENTRE - FLIGHT_STABILISE_DEADZONE && IO::input_channels[IO_IN_PITCH] <= FLIGHT_STICK_CENTRE + FLIGHT_STABILISE_DEADZONE)
+	if (IO::input_channels[IO_IN_PITCH] >= IO_CENTRE_ELEVATOR - FLIGHT_STABILISE_DEADZONE && IO::input_channels[IO_IN_PITCH] <= IO_CENTRE_ELEVATOR + FLIGHT_STABILISE_DEADZONE)
 	{
 		if (!stabilisingPitch)
 		{
@@ -59,7 +59,7 @@ void Stabilise::Loop()
 	else
 		stabilisingPitch = false;
 
-	if (IO::input_channels[IO_IN_YAW] >= FLIGHT_STICK_CENTRE - FLIGHT_STABILISE_DEADZONE && IO::input_channels[IO_IN_YAW] <= FLIGHT_STICK_CENTRE + FLIGHT_STABILISE_DEADZONE)
+	if (IO::input_channels[IO_IN_YAW] >= IO_CENTRE_RUDDER - FLIGHT_STABILISE_DEADZONE && IO::input_channels[IO_IN_YAW] <= IO_CENTRE_RUDDER + FLIGHT_STABILISE_DEADZONE)
 	{
 		if (!stabilisingYaw)
 		{
@@ -86,15 +86,15 @@ void Stabilise::Loop()
 		else
 			deltaRoll -= timeGainRoll;*/
 
-		unsigned short channelOutput = constrain(FLIGHT_STICK_CENTRE + deltaRoll, FLIGHT_STICK_MIN, FLIGHT_STICK_MAX);
+		unsigned short channelOutput = constrain(IO_CENTRE_AILERON + deltaRoll, IO_MIN_AILERON, IO_MAX_AILERON);
 
 		IO::final_channels[IO_OUT_AILERON1] = channelOutput;
 		IO::final_channels[IO_OUT_AILERON2] = channelOutput;
 	}
 	else
 	{
-		IO::final_channels[IO_OUT_AILERON1] = IO::input_channels[IO_IN_ROLL];
-		IO::final_channels[IO_OUT_AILERON2] = IO::input_channels[IO_IN_ROLL];
+		IO::final_channels[IO_OUT_AILERON1] = map(IO::input_channels[IO_IN_ROLL], FLIGHT_STICK_MIN, FLIGHT_STICK_MAX, IO_MIN_AILERON, IO_MAX_AILERON);
+		IO::final_channels[IO_OUT_AILERON2] = map(IO::input_channels[IO_IN_ROLL], FLIGHT_STICK_MIN, FLIGHT_STICK_MAX, IO_MIN_AILERON, IO_MAX_AILERON);
 	}
 	if (stabilisingPitch)
 	{
@@ -110,13 +110,13 @@ void Stabilise::Loop()
 		else
 			deltaPitch -= timeGainPitch;*/
 
-		unsigned short channelOutput = constrain(FLIGHT_STICK_CENTRE + deltaPitch, FLIGHT_STICK_MIN, FLIGHT_STICK_MAX);
+		unsigned short channelOutput = constrain(IO_CENTRE_ELEVATOR - deltaPitch, IO_MIN_ELEVATOR, IO_MAX_ELEVATOR);
 
 		IO::final_channels[IO_OUT_ELEVATOR] = channelOutput;
 	}
 	else
 	{
-		IO::final_channels[IO_OUT_ELEVATOR] = IO::input_channels[IO_IN_PITCH];
+		IO::final_channels[IO_OUT_ELEVATOR] = map(IO::input_channels[IO_IN_PITCH], FLIGHT_STICK_MIN, FLIGHT_STICK_MAX, IO_MIN_ELEVATOR, IO_MAX_ELEVATOR);
 	}
 	if (stabilisingYaw)
 	{
@@ -137,13 +137,13 @@ void Stabilise::Loop()
 		else
 			deltaYaw -= timeGainYaw;
 
-		unsigned short channelOutput = constrain(FLIGHT_STICK_CENTRE + deltaYaw, FLIGHT_STICK_MIN, FLIGHT_STICK_MAX);
+		unsigned short channelOutput = constrain(IO_CENTRE_RUDDER + deltaYaw, IO_MIN_RUDDER, IO_MAX_RUDDER);
 
 		IO::final_channels[IO_OUT_RUDDER] = channelOutput;
 	}
 	else
 	{
-		IO::final_channels[IO_OUT_RUDDER] = IO::input_channels[IO_IN_YAW];
+		IO::final_channels[IO_OUT_RUDDER] = map(IO::input_channels[IO_IN_YAW], FLIGHT_STICK_MIN, FLIGHT_STICK_MAX, IO_MIN_RUDDER, IO_MAX_RUDDER);
 	}
 
 	IO::final_channels[IO_OUT_MOTOR1] = IO::input_channels[IO_IN_THROTTLE];

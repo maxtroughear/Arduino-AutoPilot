@@ -18,6 +18,8 @@ bool Sensors::accelWorking = false;
 bool Sensors::magWorking = false;
 bool Sensors::altWorking = false;
 
+unsigned long Sensors::timeSinceCal = 0;
+
 #if SENSORS_MOTION_FILTER
 ExponentialFilter<float> Sensors::motionFilterPitch = ExponentialFilter<float>(SENSORS_MOTION_FILTER_PERCENT, 0);
 ExponentialFilter<float> Sensors::motionFilterRoll = ExponentialFilter<float>(SENSORS_MOTION_FILTER_PERCENT, 0);

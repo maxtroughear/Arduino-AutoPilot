@@ -16,6 +16,8 @@ private:
 
 	static void sendGPS();
 
+	static void longToBytes(long val, byte b[4]);
+
 	static bool connected;
 
 	static unsigned long lastpoll;
