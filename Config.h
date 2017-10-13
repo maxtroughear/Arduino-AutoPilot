@@ -21,18 +21,18 @@
 
 // GPS
 
-#define GPS_PORT							NeoSerial1
+#define GPS_PORT							NeoSerial2
 #define GPS_DEBUG_ECHO						false
 #define GPS_RATE							ubxRate10Hz
 
 // Configurator
 
-#define CONFIGURE_PORT						NeoSerial
+#define CONFIGURE_PORT						NeoSerial1
 #define CONFIGURE_SEND_GPS_TIME				200
 
 // IO
 
-#define IO_ENABLED							false
+#define IO_ENABLED							true
 
 #define IO_INPUT_FILTER_AMOUNT				10
 #define IO_DEBUG_LOG_IN						false

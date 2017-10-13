@@ -1,69 +1,6 @@
 #include "GPS.h"
-
+#include "ubxMessages.h"
 #include "../Config.h"
-
-// U-blox rate commands
-const unsigned char ubxRate1Hz[] PROGMEM =
-{ 0x06,0x08,0x06,0x00,0xE8,0x03,0x01,0x00,0x01,0x00 };
-const unsigned char ubxRate5Hz[] PROGMEM =
-{ 0x06,0x08,0x06,0x00,200,0x00,0x01,0x00,0x01,0x00 };
-const unsigned char ubxRate10Hz[] PROGMEM =
-{ 0x06,0x08,0x06,0x00,100,0x00,0x01,0x00,0x01,0x00 };
-const unsigned char ubxRate16Hz[] PROGMEM =
-{ 0x06,0x08,0x06,0x00,50,0x00,0x01,0x00,0x01,0x00 };
-
-const unsigned char ubxBaud38400[] PROGMEM =
-{ 0x06, 0x00, 0x14, 0x00, 0x01, 0x00, 0x00, 0x00, 0x10, 0x00, 0x00, 0x00, 0x00, 0x96, 0x00, 0x00, 0x01, 0x00, 0x01, 0x00, 0x00, 0x00, 0x00, 0x00 };
-
-// Disable specific NMEA sentences
-const unsigned char ubxDisableGGA[] PROGMEM =
-{ 0x06,0x01,0x08,0x00,0xF0,0x00,0x00,0x00,0x00,0x00,0x00,0x00 };
-const unsigned char ubxDisableGLL[] PROGMEM =				 
-{ 0x06,0x01,0x08,0x00,0xF0,0x01,0x00,0x00,0x00,0x00,0x00,0x00 };
-const unsigned char ubxDisableGSA[] PROGMEM =				 
-{ 0x06,0x01,0x08,0x00,0xF0,0x02,0x00,0x00,0x00,0x00,0x00,0x00 };
-const unsigned char ubxDisableGSV[] PROGMEM =				 
-{ 0x06,0x01,0x08,0x00,0xF0,0x03,0x00,0x00,0x00,0x00,0x00,0x00 };
-const unsigned char ubxDisableRMC[] PROGMEM =				 
-{ 0x06,0x01,0x08,0x00,0xF0,0x04,0x00,0x00,0x00,0x00,0x00,0x00 };
-const unsigned char ubxDisableVTG[] PROGMEM =				 
-{ 0x06,0x01,0x08,0x00,0xF0,0x05,0x00,0x00,0x00,0x00,0x00,0x00 };
-const unsigned char ubxDisableZDA[] PROGMEM =				 
-{ 0x06,0x01,0x08,0x00,0xF0,0x08,0x00,0x00,0x00,0x00,0x00,0x00 };
-
-const unsigned char ubxEnableNavStatus[] PROGMEM =
-{ 0x06,0x01,0x08,0x00,0x01,0x03,0x00,0x01,0x00,0x00,0x00,0x00 };
-const unsigned char ubxEnablePOSLLH[] PROGMEM =
-{ 0x06,0x01,0x08,0x00,0x01,0x02,0x00,0x01,0x00,0x00,0x00,0x00 };
-const unsigned char ubxEnableVELNED[] PROGMEM =
-{ 0x06,0x01,0x08,0x00,0x01,0x12,0x00,0x01,0x00,0x00,0x00,0x00 };
-const unsigned char ubxEnableTIMEUTC[] PROGMEM =
-{ 0x06,0x01,0x08,0x00,0x01,0x21,0x00,0x01,0x00,0x00,0x00,0x00 };
-
-const unsigned char ubxDisableNavStatus[] PROGMEM =
-{ 0x06,0x01,0x08,0x00,0x01,0x03,0x00,0x00,0x00,0x00,0x00,0x00 };
-const unsigned char ubxDisablePOSLLH[] PROGMEM =
-{ 0x06,0x01,0x08,0x00,0x01,0x02,0x00,0x00,0x00,0x00,0x00,0x00 };
-const unsigned char ubxDisableVELNED[] PROGMEM =
-{ 0x06,0x01,0x08,0x00,0x01,0x12,0x00,0x00,0x00,0x00,0x00,0x00 };
-const unsigned char ubxDisableTIMEUTC[] PROGMEM =
-{ 0x06,0x01,0x08,0x00,0x01,0x21,0x00,0x00,0x00,0x00,0x00,0x00 };
-
-//const char disableRMC[] PROGMEM = "PUBX,40,RMC,0,0,0,0,0,0";
-//const char disableGLL[] PROGMEM = "PUBX,40,GLL,0,0,0,0,0,0";
-//const char disableGSV[] PROGMEM = "PUBX,40,GSV,0,0,0,0,0,0";
-//const char disableGSA[] PROGMEM = "PUBX,40,GSA,0,0,0,0,0,0";
-//const char disableGGA[] PROGMEM = "PUBX,40,GGA,0,0,0,0,0,0";
-//const char disableVTG[] PROGMEM = "PUBX,40,VTG,0,0,0,0,0,0";
-//const char disableZDA[] PROGMEM = "PUBX,40,ZDA,0,0,0,0,0,0";
-//
-//const char enableRMC[] PROGMEM = "PUBX,40,RMC,0,1,0,0,0,0";
-//const char enableGLL[] PROGMEM = "PUBX,40,GLL,0,1,0,0,0,0";
-//const char enableGSV[] PROGMEM = "PUBX,40,GSV,0,1,0,0,0,0";
-//const char enableGSA[] PROGMEM = "PUBX,40,GSA,0,1,0,0,0,0";
-//const char enableGGA[] PROGMEM = "PUBX,40,GGA,0,1,0,0,0,0";
-//const char enableVTG[] PROGMEM = "PUBX,40,VTG,0,1,0,0,0,0";
-//const char enableZDA[] PROGMEM = "PUBX,40,ZDA,0,1,0,0,0,0";
 
 //NMEAGPS GPS::gps;
 ubloxGPS GPS::gps = ubloxGPS(&NeoSerial1);
@@ -82,14 +19,6 @@ void GPS::Initialise()
 	GPS_PORT.begin(9600);
 
 	delay(2000);
-	// set baud rate
-	/*sendUBX(ubxBaud38400, sizeof(ubxBaud38400));
-
-	GPS_PORT.flush();
-	delay(100);
-	GPS_PORT.end();
-	delay(100);
-	GPS_PORT.begin(38400);*/
 
 	// disable all NMEA messages
 	sendUBX(ubxDisableGLL, sizeof(ubxDisableGLL));
@@ -121,6 +50,7 @@ void GPS::Initialise()
 void GPS::Loop()
 {
 #if GPS_DEBUG_ECHO
+	// Echo to the Serial output all data from the GPS Serial port
 	while (GPS_PORT.available())
 	{
 		char c = GPS_PORT.read();
@@ -134,6 +64,7 @@ void GPS::Loop()
 	}
 	NeoSerial.println();
 #else
+	// Process data from the GPS Serial port
 	while (gps.available(GPS_PORT))
 	{
 		fix = gps.read();
@@ -144,16 +75,20 @@ void GPS::Loop()
 	// handle
 }
 
+// Calculate the distance in metres from the current position to the location parameter
 float GPS::DistanceTo(const NeoGPS::Location_t &point)
 {
 	return fix.location.DistanceKm(point) * 1000;
 }
 
+// Calculate the bearing from the current position to the location parameter
 float GPS::BearingTo(const NeoGPS::Location_t &point)
 {
 	return fix.location.BearingToDegrees(point);
 }
 
+// Endless function to switch the program to a simple pass through for the GPS Serial port
+// Used for debugging in the 'uBlox u-center' application
 void GPS::PassThrough()
 {
 	GPS_PORT.begin(9600);
@@ -167,6 +102,7 @@ void GPS::PassThrough()
 	}
 }
 
+// Update the public GPSData object with only valid information from the GPS fix data
 void GPS::updateData()
 {
 	if (fix.valid.status)
@@ -208,6 +144,7 @@ void GPS::updateData()
 	}
 }
 
+// send a ubx message prefixed with required bytes and suffixed checksum bytes
 void GPS::sendUBX(const unsigned char *progmemBytes, size_t len)
 {
 	GPS_PORT.write(0xB5); // SYNC1

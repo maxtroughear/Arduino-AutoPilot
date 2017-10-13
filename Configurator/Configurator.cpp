@@ -4,6 +4,7 @@
 #include "../Config.h"
 
 #include "../GPS/GPS.h"
+#include "../Sensors/Sensors.h"
 #include "../Logic/Logic.h"
 #include "../Logic/Navigate/Navigate.h"
 
@@ -16,6 +17,8 @@ unsigned long Configurator::lastGPS = 0;
 
 void Configurator::Init()
 {
+	CONFIGURE_PORT.begin(9600);
+	delay(50);
 	CONFIGURE_PORT.setTimeout(10);
 }
 
@@ -125,11 +128,37 @@ void Configurator::decode(byte buffer[], short size)
 					CONFIGURE_PORT.write('C');	// count
 					CONFIGURE_PORT.write(FlightModes::Navigate::GetWaypointCount());
 				}
+				else if (buffer[5] == 'A')
+				{
+					for (int i = 0; i < FlightModes::Navigate::GetWaypointCount(); i++)
+					{
+						NeoGPS::Location_t point = FlightModes::Navigate::GetWaypoint(i);
+
+						byte latB[4];
+						byte lonB[4];
+
+						longToBytes(point.lat(), latB);
+						longToBytes(point.lon(), lonB);
+
+						CONFIGURE_PORT.write('A');
+						CONFIGURE_PORT.write('P');	// header
+						CONFIGURE_PORT.write('C');	// config
+						CONFIGURE_PORT.write('N');	// nav
+						CONFIGURE_PORT.write('G');	// get
+						CONFIGURE_PORT.write('W');
+						CONFIGURE_PORT.write(i);
+
+						for (int j = 0; j < 4; j++)
+							CONFIGURE_PORT.write(latB[j]);
+						for (int j = 0; j < 4; j++)
+							CONFIGURE_PORT.write(lonB[j]);
+					}
+				}
 				else
 				{
-					char *numBuffer = new char[size - 5];
+					char *numBuffer = new char[size - 5]; // create a char array with a size of the remaining bytes from the buffer
 
-					for (int i = 5, j = 0; i < size; i++, j++)
+					for (int i = 5, j = 0; i < size; i++, j++) // take the number characters and add them to the numBuffer
 						numBuffer[j] = buffer[i];
 
 					NeoGPS::Location_t point = FlightModes::Navigate::GetWaypoint(atoi(numBuffer));
@@ -145,6 +174,7 @@ void Configurator::decode(byte buffer[], short size)
 					CONFIGURE_PORT.write('C');	// config
 					CONFIGURE_PORT.write('N');	// nav
 					CONFIGURE_PORT.write('G');	// get
+					CONFIGURE_PORT.write(atoi(numBuffer));
 
 					for (int i = 0; i < 4; i++)
 						CONFIGURE_PORT.write(latB[i]);
@@ -173,8 +203,8 @@ void Configurator::sendGPS()
 	uint8_t *altitudeBytes;
 	altitudeBytes = (uint8_t*)(&GPS::GPSData.altitude);
 
-	uint8_t *speedBytes;
-	speedBytes = (uint8_t*)(&GPS::GPSData.speed);
+	uint8_t *bearingBytes;
+	bearingBytes = (uint8_t*)(&Sensors::MotionData.AHRS.yaw);
 
 	byte latB[4];
 	byte lonB[4];
@@ -193,7 +223,7 @@ void Configurator::sendGPS()
 	for (short i = 0; i < 4; i++)
 		CONFIGURE_PORT.write(altitudeBytes[i]);
 	for (short i = 0; i < 4; i++)
-		CONFIGURE_PORT.write(speedBytes[i]);
+		CONFIGURE_PORT.write(bearingBytes[i]);
 
 	// 20 byte packet
 	

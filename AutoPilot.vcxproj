@@ -88,6 +88,7 @@
     <ClInclude Include="Configurator\Configurator.h" />
     <ClInclude Include="EEPROMConfig.h" />
     <ClInclude Include="GPS\GPS.h" />
+    <ClInclude Include="GPS\ubxMessages.h" />
     <ClInclude Include="IO\IO.h" />
     <ClInclude Include="LCD\LCD.h" />
     <ClInclude Include="LCD\Scenes\Scene.h" />
